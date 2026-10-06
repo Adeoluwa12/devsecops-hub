@@ -6,7 +6,9 @@ on:
 
 permissions:
   contents: read
-  security-events: write  # needed for CodeQL + Trivy SARIF upload
+  pull-requests: read
+  actions: read
+  security-events: write
 
 jobs:
   lint-and-test:

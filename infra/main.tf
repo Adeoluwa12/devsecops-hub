@@ -19,11 +19,23 @@ resource "azurerm_resource_group" "hub" {
 }
 
 resource "azurerm_container_registry" "hub" {
-  name                = "devsecopshubacr001" # must be globally unique, alphanumeric only
+  name                = "devsecopshubacr001"
   resource_group_name = azurerm_resource_group.hub.name
   location            = azurerm_resource_group.hub.location
   sku                 = "Basic"
-  admin_enabled       = false # we use managed identity / OIDC, not admin creds
+  admin_enabled       = false
+
+  # The checks below all require ACR Premium SKU (~$40+/month). Deliberately
+  # scoped to Basic for a zero-cost portfolio demo — documented rather than
+  # silently suppressed. Revisit if this ever carries real traffic.
+  #checkov:skip=CKV_AZURE_164:Content trust requires Premium SKU — out of scope for a free-tier demo
+  #checkov:skip=CKV_AZURE_167:Retention policies require Premium SKU — out of scope for a free-tier demo
+  #checkov:skip=CKV_AZURE_139:Disabling public networking requires Premium SKU (private endpoints) — out of scope for a free-tier demo
+  #checkov:skip=CKV_AZURE_163:Built-in vulnerability scanning requires Premium SKU — out of scope for a free-tier demo
+  #checkov:skip=CKV_AZURE_237:Dedicated data endpoints require Premium SKU — out of scope for a free-tier demo
+  #checkov:skip=CKV_AZURE_165:Geo-replication requires Premium SKU and multi-region — not applicable to a single-region demo
+  #checkov:skip=CKV_AZURE_233:Zone redundancy requires Premium SKU — out of scope for a free-tier demo
+  #checkov:skip=CKV_AZURE_166:Image quarantine/scan-on-push requires Premium SKU — out of scope for a free-tier demo
 }
 
 resource "azurerm_log_analytics_workspace" "hub" {
