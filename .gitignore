@@ -2,3 +2,6 @@
 *.exe
 *.zip
 .terraform/
+.venv/
+__pycache__/
+*.pyc
