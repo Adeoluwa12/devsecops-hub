@@ -88,6 +88,24 @@ resource "azurerm_container_app" "hub" {
   }
 }
 
+# IaC flaw: storage account with three deliberate misconfigurations
+resource "azurerm_storage_account" "hub" {
+  name                     = "stdevsecops001"
+  resource_group_name      = azurerm_resource_group.hub.name
+  location                 = azurerm_resource_group.hub.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  # IaC flaw 1: public blob access allowed (data exposed to the internet)
+  allow_nested_items_to_be_public = true
+
+  # IaC flaw 2: HTTPS-only disabled (traffic can travel in plain HTTP)
+  enable_https_traffic_only = false
+
+  # IaC flaw 3: outdated minimum TLS version (TLS 1.0 accepted)
+  min_tls_version = "TLS1_0"
+}
+
 output "acr_login_server" {
   value = azurerm_container_registry.hub.login_server
 }
